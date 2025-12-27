@@ -6,23 +6,61 @@ import { IdPipe } from "./pipes/id.pipe";
 import { Roles } from "./decorators/role.decorator";
 import { Role } from "./enums/roles.enum";
 import { AuthGuard } from "./guards/auth.guard";
+import { ApiCreatedResponse, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
-    
+
     @Post('register')
+    @ApiOperation({ summary: 'Register a new user' })
+    @ApiResponse({ status: 400, description: 'Bad Request.' })
+    @ApiCreatedResponse({ 
+        description: 'The user has been successfully registered.',
+        schema: {
+            example: {
+                userId: 3,
+                username: "john_doe",
+                email: "john@example.com",
+                role: "user",
+                access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsInVzZXJuYW1lIjoiU2VhbiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2ODU5OTQ3LCJleHAiOjE3NjY4NjM1NDd9.EwpQtgKsC5gnIEDBjCTfyxKQo9Igt8v5ILuwdg0LwHk"
+            }
+        }
+    })
+
+
     async register(@Body() createUserDTO: CreateUserDto) {
         return this.authService.registerService(createUserDTO);
     }
 
+
+
     @Post('login')
+    @ApiOperation({ summary: 'Login a user' })
+    @ApiResponse({ status: 200, description: 'The user has been successfully logged in.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+        @ApiCreatedResponse({ 
+        description: 'The user has been successfully registered.',
+        schema: {
+            example: {
+                userId: 3,
+                username: "john_doe",
+                email: "john@example.com",
+                role: "user",
+                access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsInVzZXJuYW1lIjoiU2VhbiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2ODU5OTQ3LCJleHAiOjE3NjY4NjM1NDd9.EwpQtgKsC5gnIEDBjCTfyxKQo9Igt8v5ILuwdg0LwHk"
+            }
+        }
+    })
+    
     async login(@Body() loginDTO: LoginDto) {
         return this.authService.loginService(loginDTO);
     }
 
     @Post('logoff/:userId')
+    @ApiOperation({ summary: 'Log off a user' })
+    @ApiResponse({ status: 200, description: 'The user has been successfully logged off.' })
+    @ApiResponse({ status: 400, description: 'Bad Request.' })
     async logOff(@Param('userId', IdPipe) userId: number) {
         return this.authService.logOffService(userId);
     }

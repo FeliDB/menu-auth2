@@ -12,6 +12,7 @@ export class TokenHelper {
         return {
             userId: user.id,
             username: user.username,
+            email: user.email,
             role: user.role,
             access_token: await this.jwtService.signAsync(payload),
         }

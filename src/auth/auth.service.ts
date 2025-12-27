@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { AuthRepository } from "./auth.repository";
 import { CreateUserDto } from "./dtos/create-user.dto";
 import { User } from "./user.entity";
@@ -24,15 +24,11 @@ export class AuthService {
     }
 
     async loginService(loginDTO: LoginDto): Promise<any> {
-        try {
-            const user = await this.authRepository.loginRepository(loginDTO);
-            if (!user) {
-                throw new Error('Invalid credentials');
-            }
-            return await this.tokenHelper.generateToken(user);
-        } catch (error) {
-            throw new Error('Error logging in user: ' + error.message);
+        const user = await this.authRepository.loginRepository(loginDTO);
+        if (!user) {
+            throw new UnauthorizedException('Invalid credentials');
         }
+        return await this.tokenHelper.generateToken(user);
     }
 
     async logOffService(userId: number): Promise<void> {

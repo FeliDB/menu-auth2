@@ -6,11 +6,13 @@ import { CreateUserDto } from "./dtos/create-user.dto";
 import { RegisterMapper } from "./mappers/register.mapper";
 import { LoginDto } from "./dtos/login.dto";
 import { LoginMapper } from "./mappers/login.mapper";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthRepository{
     constructor(@InjectRepository(User) private readonly userRepository: Repository<User>){}
 
+    
     async findAttribute(attribute: string, value: any): Promise<User | null>{
         const user = await this.userRepository.findOne({ where: { [attribute]: value } });
         return user;
@@ -22,9 +24,11 @@ export class AuthRepository{
     }
 
     async loginRepository(loginDTO: LoginDto): Promise<User | null>{
-        const user = await LoginMapper.toEntity(loginDTO);
-        const foundUser = await this.userRepository.findOne({ where: { email: user.email, password: user.password } });
-        return foundUser;
+        const user = LoginMapper.toEntity(loginDTO);
+        const foundUser = await this.userRepository.findOne({ where: { email: user.email } });
+        if (!foundUser) return null;
+        const isPasswordValid = await bcrypt.compare(user.password, foundUser.password);
+        return isPasswordValid ? foundUser : null;
     }
 
     async logOffRepository(userId: number): Promise<void>{
