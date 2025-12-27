@@ -26,4 +26,8 @@ export class UserRepository{
         await this.userRepository.findOne({ where: { email: user.email, password: user.password } });
         return user;
     }
+
+    async logOffRepository(userId: number): Promise<void>{
+        await this.userRepository.update(userId, { activeFlag: false });
+    }
 }

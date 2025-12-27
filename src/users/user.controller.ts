@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Param, Post } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dtos/create-user.dto";
 import { LoginDto } from "./dtos/login.dto";
+import { IdPipe } from "./pipes/id.pipe";
 
 @Controller('auth')
 export class UserController {
@@ -15,5 +16,10 @@ export class UserController {
     @Post('login')
     async login(@Body() loginDTO: LoginDto) {
         return this.userService.loginService(loginDTO);
+    }
+
+    @Post('logoff/:userId')
+    async logOff(@Param('userId', IdPipe) userId: number) {
+        return this.userService.logOffService(userId);
     }
 }

@@ -23,4 +23,12 @@ export class UserService {
             throw new Error('Error logging in user: ' + error.message);
         }
     }
+
+    async logOffService(userId: number): Promise<void> {
+        try {
+            await this.userRepository.logOffRepository(userId);
+        } catch (error) {
+            throw new Error('Error logging off user: ' + error.message);
+        }
+    }
 }
