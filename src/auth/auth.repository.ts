@@ -8,7 +8,7 @@ import { LoginDto } from "./dtos/login.dto";
 import { LoginMapper } from "./mappers/login.mapper";
 
 @Injectable()
-export class UserRepository{
+export class AuthRepository{
     constructor(@InjectRepository(User) private readonly userRepository: Repository<User>){}
 
     async findAttribute(attribute: string, value: any): Promise<User | null>{
@@ -23,8 +23,8 @@ export class UserRepository{
 
     async loginRepository(loginDTO: LoginDto): Promise<User | null>{
         const user = await LoginMapper.toEntity(loginDTO);
-        await this.userRepository.findOne({ where: { email: user.email, password: user.password } });
-        return user;
+        const foundUser = await this.userRepository.findOne({ where: { email: user.email, password: user.password } });
+        return foundUser;
     }
 
     async logOffRepository(userId: number): Promise<void>{

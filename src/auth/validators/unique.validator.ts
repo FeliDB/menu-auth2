@@ -1,15 +1,15 @@
 import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments } from "class-validator";
 import { Injectable } from "@nestjs/common";
-import { UserRepository } from "../user.repository";
+import { AuthRepository } from "../auth.repository";
 
 @ValidatorConstraint({ name: 'IsUnique', async: true })
 @Injectable()
 export class IsUniqueValidator implements ValidatorConstraintInterface {
-    constructor (private readonly userRepository: UserRepository) {}
+    constructor (private readonly authRepository: AuthRepository) {}
 
     async validate(value: any, args: ValidationArguments): Promise<boolean> {
         const [attribute] = args.constraints;
-        const user = await this.userRepository.findAttribute(attribute, value);
+        const user = await this.authRepository.findAttribute(attribute, value);
         return !user;
     }
 
